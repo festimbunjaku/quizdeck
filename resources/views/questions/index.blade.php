@@ -13,7 +13,7 @@
                     <div class="flex flex-col mt-6">
                         <div class="-mx-4 -my-2 overflow-x-auto sm:-mx-6 lg:-mx-8">
                             <div class="inline-block w-full py-2 align-middle md:px-6 lg:px-8">
-                                <div class="overflow-hidden border border-gray-200 md:rounded-lg">
+                                <div class="overflow-x-auto border border-gray-200 md:rounded-lg">
                                     <table class="w-full divide-y divide-gray-200">
                                         <thead class="bg-gray-50">
                                             <tr>
@@ -26,18 +26,7 @@
                                                 <th scope="col" class="py-3.5 px-4 text-sm font-normal text-left text-gray-500">
                                                     <span>Question</span>
                                                 </th>
-                                                <th scope="col" class="py-3.5 px-4 text-sm font-normal text-left text-gray-500">
-                                                    <span>Option A</span>
-                                                </th>
-                                                <th scope="col" class="py-3.5 px-4 text-sm font-normal text-left text-gray-500">
-                                                    <span>Option B</span>
-                                                </th>
-                                                <th scope="col" class="py-3.5 px-4 text-sm font-normal text-left text-gray-500">
-                                                    <span>Option C</span>
-                                                </th>
-                                                <th scope="col" class="py-3.5 px-4 text-sm font-normal text-left text-gray-500">
-                                                    <span>Option D</span>
-                                                </th>
+                                               
                                                 <th scope="col" class="py-3.5 px-4 text-sm font-normal text-left text-gray-500">
                                                     <span>Correct Option</span>
                                                 </th>
@@ -58,23 +47,21 @@
                                                 <td class="px-4 py-4 text-sm text-gray-700 whitespace-nowrap">
                                                     <span>{{ $question->question }}</span>
                                                 </td>
-                                                <td class="px-4 py-4 text-sm text-gray-700 whitespace-nowrap">
-                                                    <span>{{ $question->option_a }}</span>
-                                                </td>
-                                                <td class="px-4 py-4 text-sm text-gray-700 whitespace-nowrap">
-                                                    <span>{{ $question->option_b }}</span>
-                                                </td>
-                                                <td class="px-4 py-4 text-sm text-gray-700 whitespace-nowrap">
-                                                    <span>{{ $question->option_c }}</span>
-                                                </td>
-                                                <td class="px-4 py-4 text-sm text-gray-700 whitespace-nowrap">
-                                                    <span>{{ $question->option_d }}</span>
-                                                </td>
+                                               
                                                 <td class="px-4 py-4 text-sm text-gray-700 whitespace-nowrap">
                                                     <span>{{ $question->correct_option }}</span>
                                                 </td>
                                                 <td class="px-4 py-4 text-sm text-right whitespace-nowrap">
                                                     <div class="inline-flex items-center gap-x-4">
+
+                                                    <button class="text-gray-500 transition-colors duration-200 hover:text-red-500 focus:outline-none">
+                                                            <a href="{{route('questions.show', ['question' => $question->id]) }}">
+                                                                <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke-width="1.5" stroke="currentColor" class="w-5 h-5">
+                                                            <path stroke-linecap="round" stroke-linejoin="round" d="M12 4.5C7.5 4.5 4 8 4 12s3.5 7.5 8 7.5 8-3.5 8-7.5-3.5-7.5-8-7.5zm0 10.5a3 3 0 100-6 3 3 0 000 6z" />
+                                                            </svg>
+                                                            </a>
+                                                        </button>
+
                                                         <button class="text-gray-500 transition-colors duration-200 hover:text-red-500 focus:outline-none">
                                                         <a href="{{ route('questions.edit', ['question' => $question->id]) }}">
                                                             <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke-width="1.5" stroke="currentColor" class="w-5 h-5">
@@ -82,6 +69,7 @@
                                                             </svg>
                                                         </a>
                                                         </button>
+                                                        
 
                                                         <form action="{{ route('questions.destroy', ['question' => $question->id]) }}" method="POST">
                                                             @csrf

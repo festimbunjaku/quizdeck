@@ -69,6 +69,15 @@ class QuestionController extends Controller
         return redirect()->route('questions.index')->with('success', 'Question updated successfully');
     }
 
+    public function show(string $id)
+    {
+        $question = Question::findOrFail($id);
+
+        return view('questions.show', compact('question'));
+    }
+
+
+
     public function edit(Question $question)
     {
         $quizzes = Quiz::all(); // Fetch all quizzes
@@ -80,8 +89,9 @@ class QuestionController extends Controller
     {
         $quiz_id = $question->quiz->id;
         $question->delete();
-
+    
         return redirect()->route('questions.index', ['quiz_id' => $quiz_id]);
     }
+    
 }
 

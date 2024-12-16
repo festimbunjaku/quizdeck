@@ -43,8 +43,9 @@ class CategoryController extends Controller
      */
     public function show(string $id)
     {
-        //
-    }
+        $category = Category::with('quizzes.questions')->findOrFail($id);
+
+        return view('categories.show', compact('category'));    }
 
     /**
      * Show the form for editing the specified resource.

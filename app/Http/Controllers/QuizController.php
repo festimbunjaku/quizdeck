@@ -51,10 +51,9 @@ class QuizController extends Controller
      */
     public function show(string $id)
     {
-        $quiz = quiz::findOrFail($id);
-        return view('quizes.show',[
-            'quizes' => $quiz
-        ]);       
+        $quiz = quiz::with('questions')->findOrFail($id);
+
+        return view('quizes.show', compact('quiz'));    
     }
 
     /**
@@ -96,7 +95,7 @@ class QuizController extends Controller
     public function destroy(string $id)
     {
         if(quiz::findOrFail($id)->delete()){
-            return redirect()->back(); 
+            return redirect()->route('quizes.index'); 
         }
     }
 }

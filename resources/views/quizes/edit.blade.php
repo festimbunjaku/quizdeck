@@ -9,6 +9,11 @@
         <div class="max-w-7xl mx-auto sm:px-6 lg:px-8">
             <div class="bg-white overflow-hidden shadow-xl sm:rounded-lg">
 
+            <div class="mb-6 mx-2">
+                        <h3 class="text-lg font-medium text-gray-700 mt-2">Category ID / Name:</h3>
+                        <p class="text-sm text-gray-600">{{ $quiz->id }} / {{ $quiz->title }}</p>
+            </div>
+
             @if($errors->any())
                 <div class="alert alert-danger">
                     <ul>
