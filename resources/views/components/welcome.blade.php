@@ -1,11 +1,15 @@
-<div class="p-6 lg:p-8 bg-white border-b border-gray-200">
+<div class="p-6 lg:p-8 bg-white  border-gray-200 flex gap-10">
     <x-application-mark class="block w-auto h-9" />
 
-    <h1 class="mt-8 text-2xl font-medium text-gray-900">
+    <h1 class="mt-4  text-2xl font-medium text-gray-900">
         Welcome to QuizDeck Admin Panel!
     </h1>
 
-    <p class="mt-6 text-gray-500 leading-relaxed">
+   
+</div>
+
+<div class="px-6 pb-4">
+<p class="text-gray-500 leading-relaxed">
         The QuizDeck Admin Panel is where you can efficiently manage categories, quizzes, questions. With an intuitive interface, you can oversee all aspects of content creation and user management to ensure an optimal experience for your users.
     </p>
 </div>
