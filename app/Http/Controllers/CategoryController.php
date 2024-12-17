@@ -25,6 +25,31 @@ class CategoryController extends Controller
         return view('categories.create');    
     }
 
+
+
+    public function quizQuestions($categoryId, $quizId)
+    {
+        $category = Category::find($categoryId);
+
+        if (!$category) {
+            return response()->json(['error' => 'Category not found'], 404);
+        }
+
+        $quiz = $category->quizzes()->where('id', $quizId)->first();
+
+        if (!$quiz) {
+            return response()->json(['error' => 'Quiz not found in this category'], 404);
+        }
+
+        $questions = $quiz->questions;
+
+        return response()->json([
+            'category' => $category->name,
+            'quiz' => $quiz->title,
+            'questions' => $questions
+        ]);
+    }
+
     /**
      * Store a newly created resource in storage.
      */
