@@ -21,6 +21,9 @@ Route::get('quizzes/{id}', function ($id) {
     return $quiz;
 });
 
+Route::get('quizzes/{quiz}/questions', [CategoryController::class, 'quizQuestions']);
 
 Route::get('categories/{categoryId}/quizzes/{quizId}/questions', [CategoryController::class, 'quizQuestions']);
+
+Route::get('quizzes/{quizId}/questions', [CategoryController::class, 'quizQuestions']);
 
