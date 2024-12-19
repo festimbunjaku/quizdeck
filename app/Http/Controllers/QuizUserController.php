@@ -3,6 +3,7 @@
 namespace App\Http\Controllers;
 
 use App\Models\QuizUser;
+use App\Models\Quiz;
 use Illuminate\Http\Request;
 
 class QuizUserController extends Controller
@@ -18,12 +19,17 @@ class QuizUserController extends Controller
             'score' => 'required|integer',
         ]);
 
-        // Check if the user has already completed this quiz
+        $quiz = Quiz::find($validated['quiz_id']);
+
+        $maxScore = $quiz->questions->count() * 5; 
+
+        $completed = $validated['score'] === $maxScore;
+
         $quizUser = QuizUser::updateOrCreate(
             ['user_id' => $validated['user_id'], 'quiz_id' => $validated['quiz_id']],
             [
                 'score' => $validated['score'],
-                'completed' => true,  // Mark the quiz as completed
+                'completed' => $completed, 
             ]
         );
 
@@ -32,6 +38,5 @@ class QuizUserController extends Controller
             'quiz_user' => $quizUser
         ]);
     }
-
-    // Add any other methods if needed, e.g., for retrieving results or handling errors
 }
+

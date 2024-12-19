@@ -1,27 +1,28 @@
 import React, { useEffect, useState, useCallback } from 'react';
-import { useParams } from 'react-router-dom';
+import { useParams, useNavigate } from 'react-router-dom';
 import axios from 'axios';
 
 function QuizComponent() {
     const { categoryId, quizId } = useParams();
+    const navigate = useNavigate();
     const [questions, setQuestions] = useState([]);
     const [currentQuestionIndex, setCurrentQuestionIndex] = useState(0);
     const [score, setScore] = useState(0);
-    const [timer, setTimer] = useState(10);
+    const [timer, setTimer] = useState(20);
     const [quizStarted, setQuizStarted] = useState(false);
     const [error, setError] = useState(null);
     const [selectedOption, setSelectedOption] = useState(null);
     const [userId, setUserId] = useState(1);
     const [quizCompleted, setQuizCompleted] = useState(false);
     const [answers, setAnswers] = useState([]);
-    const [isAnswered, setIsAnswered] = useState(false);
-    const [timerInterval, setTimerInterval] = useState(null);
+    const [completedStatus, setCompletedStatus] = useState(0); // 0 = not completed, 1 = completed
 
     useEffect(() => {
         axios
             .get(`http://127.0.0.1:8000/api/categories/${categoryId}/quizzes/${quizId}/questions`)
             .then((response) => {
                 setQuestions(response.data.questions || []);
+                console.log("Fetched questions:", response.data.questions); // Debug log
             })
             .catch(() => {
                 setError('Error fetching quiz data');
@@ -29,69 +30,80 @@ function QuizComponent() {
     }, [categoryId, quizId]);
 
     const handleNextQuestion = useCallback(() => {
+        const currentQuestion = questions[currentQuestionIndex];
+        const correctOption = currentQuestion?.correct_option;
+
+        // Update score only if the selected option is correct
+        if (selectedOption === correctOption) {
+            setScore((prevScore) => prevScore + 5);
+        }
+
+        // Store the answer for later review
+        setAnswers((prevAnswers) => {
+            const updatedAnswers = [...prevAnswers];
+            updatedAnswers[currentQuestionIndex] = selectedOption;
+            return updatedAnswers;
+        });
+
         if (currentQuestionIndex < questions.length - 1) {
             setCurrentQuestionIndex((prevIndex) => prevIndex + 1);
             setSelectedOption(null);
-            setIsAnswered(false);
-            setTimer(10);
+            setTimer(20);
         } else {
+            // All questions answered, quiz is complete
             setQuizCompleted(true);
-            clearInterval(timerInterval);
         }
-    }, [currentQuestionIndex, questions.length, timerInterval]);
+    }, [selectedOption, currentQuestionIndex, questions]);
+
+    // After quiz completion, check if the user has full score
+    useEffect(() => {
+        if (quizCompleted) {
+            const totalPossibleScore = questions.length * 5; // 5 points per correct answer
+            const userScore = score; // Final score after all questions answered
+
+            if (userScore === totalPossibleScore) {
+                setCompletedStatus(1); // Full score
+            } else {
+                setCompletedStatus(0); // Not full score
+            }
+        }
+    }, [quizCompleted, score, questions.length]);
 
     useEffect(() => {
-        if (quizStarted && !quizCompleted && questions.length > 0) {
-            const newTimerInterval = setInterval(() => {
+        let interval;
+        if (quizStarted && !quizCompleted) {
+            interval = setInterval(() => {
                 setTimer((prevTimer) => {
                     if (prevTimer > 0) {
                         return prevTimer - 1;
                     } else {
                         handleNextQuestion();
-                        return 10;
+                        return 20;
                     }
                 });
             }, 1000);
-
-            setTimerInterval(newTimerInterval);
-
-            return () => clearInterval(newTimerInterval);
         }
-    }, [quizStarted, questions.length, currentQuestionIndex, quizCompleted, handleNextQuestion]);
+        return () => clearInterval(interval);
+    }, [quizStarted, quizCompleted, handleNextQuestion]);
 
     const handleStartQuiz = () => {
         setQuizStarted(true);
-        setTimer(10);
+        setTimer(20);
     };
 
     const handleAnswerClick = (option) => {
-        if (isAnswered) return;
-
         setSelectedOption(option);
-        setAnswers((prevAnswers) => {
-            const newAnswers = [...prevAnswers];
-            newAnswers[currentQuestionIndex] = option;
-            return newAnswers;
-        });
-
-        const correctOption = questions[currentQuestionIndex]?.correct_option;
-
-        if (option === correctOption) {
-            setScore((prevScore) => prevScore + 5);
-        }
-
-        setIsAnswered(true);
     };
 
     const handleRestartQuiz = () => {
         setQuizStarted(false);
         setCurrentQuestionIndex(0);
         setScore(0);
-        setTimer(10);
+        setTimer(20);
         setSelectedOption(null);
-        setIsAnswered(false);
         setQuizCompleted(false);
         setAnswers([]);
+        setCompletedStatus(0);
     };
 
     const handleSubmitQuiz = () => {
@@ -99,13 +111,14 @@ function QuizComponent() {
             user_id: userId,
             quiz_id: quizId,
             score: score,
+            completed: completedStatus,
         };
 
         axios
             .post('http://127.0.0.1:8000/api/quiz_results', quizResult)
             .then(() => {
                 alert('Quiz submitted successfully!');
-                setQuizCompleted(true);
+                navigate('/quizzes');
             })
             .catch((error) => {
                 console.error('Error submitting quiz result:', error);
@@ -116,8 +129,20 @@ function QuizComponent() {
         return <div className="text-red-500 text-center mt-10">{error}</div>;
     }
 
+
+    if (questions.length === 0) {
+        return (
+            <div className="flex justify-center items-center min-h-screen">
+                <div className="text-center m-36">
+                    <h2 className="text-3xl font-bold text-orange-500">This quiz has no questions</h2>
+                </div>
+            </div>
+
+        );
+    }
+
     return (
-        <div className="quiz-container mt-10 text-white bg-black min-h-screen flex flex-col items-center justify-center">
+        <div className="quiz-container mt-10  text-black bg-gray-200 min-h-screen flex flex-col items-center justify-center">
             {!quizStarted ? (
                 <div className="start-screen text-center">
                     <h2 className="text-3xl font-bold text-orange-500 mb-5">Welcome to the Quiz</h2>
@@ -129,98 +154,81 @@ function QuizComponent() {
                     </button>
                 </div>
             ) : quizCompleted ? (
-                <div className="completed-quiz">
+                <div className="completed-quiz text-center">
                     <h2 className="text-3xl font-bold text-orange-500 mb-5">Quiz Completed!</h2>
                     <p className="text-lg mb-5">
                         Your score: <span className="text-orange-500 font-bold">{score}</span> / {questions.length * 5}
                     </p>
-
-                    <div className="correct-answers">
+                    <div className="correct-answers text-left mb-5">
                         <h3 className="text-xl font-bold text-orange-500 mb-3">Correct Answers</h3>
                         <ul className="list-disc pl-5">
                             {questions.map((question, index) => (
                                 <li key={index}>
-                                    <div className="question">
-                                        <p className="font-semibold">{question.question}</p>
-                                        <p className={answers[index] === question.correct_option ? 'text-green-500' : 'text-red-500'}>
-                                            Your Answer: {answers[index]} - Correct Answer: {question.correct_option}
-                                        </p>
-                                    </div>
+                                    <p className="font-semibold">{question.question}</p>
+                                    <p
+                                        className={answers[index] === question.correct_option
+                                            ? 'text-green-500'
+                                            : 'text-red-500'
+                                        }
+                                    >
+                                        Your Answer: {answers[index] || 'None'} - Correct Answer: {question.correct_option}
+                                    </p>
                                 </li>
                             ))}
                         </ul>
                     </div>
-
-                    <button
-                        className="bg-orange-500 hover:bg-orange-600 text-white font-semibold px-6 py-3 rounded-lg"
-                        onClick={handleRestartQuiz}
-                    >
-                        Restart Quiz
-                    </button>
-                    <button
-                        className="bg-orange-500 hover:bg-orange-600 text-white font-semibold px-6 py-3 rounded-lg mt-3"
-                        onClick={handleSubmitQuiz}
-                    >
-                        Submit Quiz
-                    </button>
-                </div>
-            ) : currentQuestionIndex < questions.length ? (
-                <div className="question-screen w-11/12 max-w-3xl bg-gray-800 p-6 rounded-lg shadow-lg">
-                    <div className="timer text-right text-orange-500 text-lg mb-4">
-                        Time Remaining: <span>{timer}s</span>
-                    </div>
-                    <div className="question">
-                        <h3 className="text-xl font-bold mb-3">
-                            Question {currentQuestionIndex + 1} of {questions.length}
-                        </h3>
-                        <p className="text-lg mb-5">{questions[currentQuestionIndex]?.question}</p>
-                        <div className="options grid grid-cols-1 md:grid-cols-2 gap-4">
-                            {['A', 'B', 'C', 'D'].map((option, index) => (
-                                <button
-                                    key={index}
-                                    className={`px-4 py-2 rounded-lg text-white font-semibold ${
-                                        selectedOption === questions[currentQuestionIndex][`option_${option.toLowerCase()}`]
-                                            ? 'bg-orange-500 border-2 border-orange-500'
-                                            : 'bg-gray-700 hover:bg-gray-600'
-                                    }`}
-                                    onClick={() => handleAnswerClick(option)}
-                                    disabled={isAnswered}
-                                >
-                                    {option}) {questions[currentQuestionIndex][`option_${option.toLowerCase()}`]}
-                                </button>
-                            ))}
-                        </div>
-                    </div>
-                    <div className="flex justify-end mt-5">
+                    <div className="actions flex justify-center gap-4">
+                        {completedStatus === 0 && (
+                            <button
+                                className="bg-orange-500 hover:bg-orange-600 text-white font-semibold px-6 py-3 rounded-lg"
+                                onClick={handleRestartQuiz}
+                            >
+                                Restart Quiz
+                            </button>
+                        )}
                         <button
-                            className={`px-6 py-2 rounded-lg font-semibold ${
-                                selectedOption ? 'bg-orange-500 hover:bg-orange-600 text-white' : 'bg-gray-500 text-gray-300 cursor-not-allowed'
-                            }`}
-                            onClick={handleNextQuestion}
-                            disabled={!isAnswered}
+                            className="bg-orange-500 hover:bg-orange-600 text-white font-semibold px-6 py-3 rounded-lg"
+                            onClick={handleSubmitQuiz}
                         >
-                            {currentQuestionIndex === questions.length - 1 ? 'Submit Quiz' : 'Next Question'}
+                            Save Quiz
                         </button>
                     </div>
                 </div>
             ) : (
-                <div className="score-screen text-center">
-                    <h2 className="text-3xl font-bold text-orange-500 mb-5">Quiz Completed!</h2>
-                    <p className="text-lg mb-5">
-                        Your score: <span className="text-orange-500 font-bold">{score}</span> / {questions.length * 5}
-                    </p>
-                    <button
-                        className="bg-orange-500 hover:bg-orange-600 text-white font-semibold px-6 py-3 rounded-lg"
-                        onClick={handleRestartQuiz}
-                    >
-                        Restart Quiz
-                    </button>
-                    <button
-                        className="bg-orange-500 hover:bg-orange-600 text-white font-semibold px-6 py-3 rounded-lg mt-3"
-                        onClick={handleSubmitQuiz}
-                    >
-                        Submit Quiz
-                    </button>
+                <div className="question-screen w-11/12 max-w-3xl bg-gray-100 p-6 rounded-lg shadow-lg">
+                    <div className="timer text-right text-orange-500 text-lg mb-4">
+                        Time Remaining: <span>{timer}s</span>
+                    </div>
+                    <h3 className="text-xl font-bold mb-3">
+                        Question {currentQuestionIndex + 1} of {questions.length}
+                    </h3>
+                    <p className="text-lg mb-5">{questions[currentQuestionIndex]?.question}</p>
+                    <div className="options grid grid-cols-1 md:grid-cols-2 gap-4">
+                        {['A', 'B', 'C', 'D'].map((option, index) => (
+                            <button
+                                key={index}
+                                className={`px-4 py-2 rounded-lg text-black font-semibold ${
+                                    selectedOption === option
+                                        ? 'bg-orange-500 border-2 border-orange-500'
+                                        : 'bg-gray-200 hover:bg-gray-300'
+                                }`}
+                                onClick={() => handleAnswerClick(option)}
+                            >
+                                {option}) {questions[currentQuestionIndex][`option_${option.toLowerCase()}`]}
+                            </button>
+                        ))}
+                    </div>
+                    <div className="flex justify-end mt-5">
+                        <button
+                            className={`px-6 py-2 rounded-lg font-semibold ${
+                                selectedOption ? 'bg-orange-500 hover:bg-orange-600 text-white' : 'bg-gray-300 text-gray-500 cursor-not-allowed'
+                            }`}
+                            onClick={handleNextQuestion}
+                            disabled={!selectedOption}
+                        >
+                            {currentQuestionIndex === questions.length - 1 ? 'Finish the Quiz' : 'Next Question'}
+                        </button>
+                    </div>
                 </div>
             )}
         </div>

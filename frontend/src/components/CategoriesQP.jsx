@@ -38,6 +38,7 @@ function CategoriesQP() {
 
   return (
     <>
+      <div className='min-h-screen'>
       <h1 className="text-4xl font-bold text-center mt-32">Check Out All Categories and Their Quizzes</h1>
 
       <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-8 mt-16 px-6">
@@ -73,6 +74,7 @@ function CategoriesQP() {
             </div>
           </div>
         ))}
+      </div>
       </div>
     </>
   );
