@@ -3,6 +3,7 @@
 namespace App\Models;
 
 // use Illuminate\Contracts\Auth\MustVerifyEmail;
+use App\Models\QuizUser;
 use Laravel\Sanctum\HasApiTokens;
 use Laravel\Jetstream\HasProfilePhoto;
 use Spatie\Permission\Traits\HasRoles;
@@ -97,6 +98,11 @@ class User extends Authenticatable
     public function flashcards()
     {
         return $this->hasMany(Flashcard::class);
+    }
+
+    public function quizResults()
+    {
+        return $this->hasMany(QuizUser::class);
     }
 }
 

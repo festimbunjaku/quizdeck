@@ -6,6 +6,7 @@ use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Route;
 use App\Http\Controllers\CategoryController;
 use App\Http\Controllers\QuizUserController;
+use App\Http\Controllers\LeaderboardController;
 
 
 Route::get('categories', function(){
@@ -31,5 +32,6 @@ Route::get('quizzes/{quizId}/questions', [CategoryController::class, 'quizQuesti
 
 Route::post('/quiz_results', [QuizUserController::class, 'store']);
 
+Route::get('/leaderboard', [LeaderboardController::class, 'index']);
 
 

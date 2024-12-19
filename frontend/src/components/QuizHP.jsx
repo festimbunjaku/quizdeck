@@ -1,4 +1,5 @@
 import React from 'react'
+import Footer from './Footer'
 
 function QuizHP() {
   return (
@@ -28,6 +29,7 @@ function QuizHP() {
                 </div>
             </div>
         </div>
+
     </section>
     </>
   )

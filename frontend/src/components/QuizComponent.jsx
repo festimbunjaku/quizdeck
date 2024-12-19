@@ -15,14 +15,13 @@ function QuizComponent() {
     const [userId, setUserId] = useState(1);
     const [quizCompleted, setQuizCompleted] = useState(false);
     const [answers, setAnswers] = useState([]);
-    const [completedStatus, setCompletedStatus] = useState(0); // 0 = not completed, 1 = completed
+    const [completedStatus, setCompletedStatus] = useState(0);
 
     useEffect(() => {
         axios
             .get(`http://127.0.0.1:8000/api/categories/${categoryId}/quizzes/${quizId}/questions`)
             .then((response) => {
                 setQuestions(response.data.questions || []);
-                console.log("Fetched questions:", response.data.questions); // Debug log
             })
             .catch(() => {
                 setError('Error fetching quiz data');
@@ -33,12 +32,10 @@ function QuizComponent() {
         const currentQuestion = questions[currentQuestionIndex];
         const correctOption = currentQuestion?.correct_option;
 
-        // Update score only if the selected option is correct
         if (selectedOption === correctOption) {
             setScore((prevScore) => prevScore + 5);
         }
 
-        // Store the answer for later review
         setAnswers((prevAnswers) => {
             const updatedAnswers = [...prevAnswers];
             updatedAnswers[currentQuestionIndex] = selectedOption;
@@ -50,21 +47,19 @@ function QuizComponent() {
             setSelectedOption(null);
             setTimer(20);
         } else {
-            // All questions answered, quiz is complete
             setQuizCompleted(true);
         }
     }, [selectedOption, currentQuestionIndex, questions]);
 
-    // After quiz completion, check if the user has full score
     useEffect(() => {
         if (quizCompleted) {
-            const totalPossibleScore = questions.length * 5; // 5 points per correct answer
-            const userScore = score; // Final score after all questions answered
+            const totalPossibleScore = questions.length * 5;
+            const userScore = score;
 
             if (userScore === totalPossibleScore) {
-                setCompletedStatus(1); // Full score
+                setCompletedStatus(1);
             } else {
-                setCompletedStatus(0); // Not full score
+                setCompletedStatus(0);
             }
         }
     }, [quizCompleted, score, questions.length]);
@@ -129,7 +124,6 @@ function QuizComponent() {
         return <div className="text-red-500 text-center mt-10">{error}</div>;
     }
 
-
     if (questions.length === 0) {
         return (
             <div className="flex justify-center items-center min-h-screen">
@@ -137,12 +131,11 @@ function QuizComponent() {
                     <h2 className="text-3xl font-bold text-orange-500">This quiz has no questions</h2>
                 </div>
             </div>
-
         );
     }
 
     return (
-        <div className="quiz-container mt-10  text-black bg-gray-200 min-h-screen flex flex-col items-center justify-center">
+        <div className="quiz-container mt-10 text-black bg-gray-200 min-h-screen flex flex-col items-center justify-center">
             {!quizStarted ? (
                 <div className="start-screen text-center">
                     <h2 className="text-3xl font-bold text-orange-500 mb-5">Welcome to the Quiz</h2>
