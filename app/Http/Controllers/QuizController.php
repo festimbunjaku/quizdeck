@@ -3,6 +3,7 @@
 namespace App\Http\Controllers;
 
 use App\Models\quiz;
+use App\Models\category;
 use Illuminate\Http\Request;
 
 class QuizController extends Controller
@@ -10,12 +11,24 @@ class QuizController extends Controller
     /**
      * Display a listing of the resource.
      */
-    public function index()
-    {
-        return view('quizes.index', [
-            'quizes' => quiz::all(),
-        ]);    
+    public function index(Request $request)
+{
+    $categories = category::all();
+
+    $quizes = Quiz::with('category');
+
+    if ($request->has('category') && $request->category) {
+        $quizes->where('category_id', $request->category);
     }
+
+    $quizes = $quizes->get();
+
+    return view('quizes.index', [
+        'quizes' => $quizes,
+        'categories' => $categories,
+        'selectedCategory' => $request->category,
+    ]);
+}
 
     /**
      * Show the form for creating a new resource.

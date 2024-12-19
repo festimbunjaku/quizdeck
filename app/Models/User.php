@@ -74,12 +74,13 @@ class User extends Authenticatable
                     ->withTimestamps();
     }
 
+
    
     public function results()
     {
         return $this->hasMany(Result::class);
     }
-
+    
    
     public function leaderboard()
     {

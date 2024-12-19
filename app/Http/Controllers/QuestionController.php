@@ -9,21 +9,34 @@ use Illuminate\Http\Request;
 
 class QuestionController extends Controller
 {
-    // Display a listing of the resource.
-    public function index()
-{
-    $questions = Question::with('quiz')->get();
-    $quizzes = quiz::all(); // Fetch all quizzes
-    return view('questions.index', [
-        'questions' => $questions,
-        'quizzes' => $quizzes,
-    ]);
-}
+    public function index(Request $request)
+    {
+        $categories = Category::all();
+        $quizzes = Quiz::all();
+        
+        $questions = Question::with('quiz');
+        
+        if ($request->has('category') && $request->category) {
+            $questions->whereHas('quiz', function ($query) use ($request) {
+                $query->where('category_id', $request->category);
+            });
+        }
+    
+        $questions = $questions->get();
+    
+        return view('questions.index', [
+            'questions' => $questions,
+            'quizzes' => $quizzes,
+            'categories' => $categories,
+            'selectedCategory' => $request->category,
+        ]);
+    }
+    
 
     // Show the form for creating a new resource.
     public function create()
     {
-        $quizzes = Quiz::all(); // Fetch all quizzes
+        $quizzes = Quiz::all(); 
         return view('questions.create', compact('quizzes'));
     }
 
@@ -54,7 +67,7 @@ class QuestionController extends Controller
     public function update(Request $request, Question $question)
     {
         $validated = $request->validate([
-            'quiz_id' => 'required|exists:quizzes,id',  // Ensure the quiz exists
+            'quiz_id' => 'required|exists:quizzes,id',
             'question' => 'required|string',
             'option_a' => 'required|string',
             'option_b' => 'required|string',
@@ -63,7 +76,6 @@ class QuestionController extends Controller
             'correct_option' => 'required|in:A,B,C,D',
         ]);
 
-        // Update the question with the validated data
         $question->update($validated);
 
         return redirect()->route('questions.index')->with('success', 'Question updated successfully');
@@ -80,7 +92,7 @@ class QuestionController extends Controller
 
     public function edit(Question $question)
     {
-        $quizzes = Quiz::all(); // Fetch all quizzes
+        $quizzes = Quiz::all(); 
         return view('questions.edit', compact('question', 'quizzes'));
     }
 

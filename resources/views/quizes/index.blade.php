@@ -8,6 +8,27 @@
     <div class="py-12">
         <div class="max-w-7xl mx-auto sm:px-6 lg:px-8">
             <div class="bg-white overflow-hidden shadow-xl sm:rounded-lg">
+            <form method="GET" action="{{ route('quizes.index') }}" class="mt-2 ml-[88px]">
+                <div class="flex items-center space-x-4">
+                    <div>
+                        <label for="category" class="block text-sm font-medium text-gray-700">Filter by Category</label>
+                        <select name="category" id="category" class="block w-full mt-1 rounded-md border-gray-300 shadow-sm focus:ring-blue-500 focus:border-blue-500">
+                            <option value="">All Categories</option>
+                            @foreach($categories as $category)
+                                <option value="{{ $category->id }}" {{ request('category') == $category->id ? 'selected' : '' }}>
+                                    {{ $category->name }}
+                                </option>
+                            @endforeach
+                        </select>
+                    </div>
+                    <div class="mt-6">
+                        <button type="submit" class="px-4 py-2 text-white bg-blue-600 rounded-md hover:bg-blue-500">
+                            Filter
+                        </button>
+                    </div>
+                </div>
+            </form>
+
                 @if($quizes && count($quizes) > 0)
                 <section class="container px-4 mx-auto">
                     <div class="flex flex-col mt-6">

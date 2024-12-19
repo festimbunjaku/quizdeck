@@ -5,6 +5,7 @@ use App\Models\category;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Route;
 use App\Http\Controllers\CategoryController;
+use App\Http\Controllers\QuizUserController;
 
 
 Route::get('categories', function(){
@@ -26,4 +27,9 @@ Route::get('quizzes/{quiz}/questions', [CategoryController::class, 'quizQuestion
 Route::get('categories/{categoryId}/quizzes/{quizId}/questions', [CategoryController::class, 'quizQuestions']);
 
 Route::get('quizzes/{quizId}/questions', [CategoryController::class, 'quizQuestions']);
+
+
+Route::post('/quiz_results', [QuizUserController::class, 'store']);
+
+
 
