@@ -10,7 +10,7 @@
             <div class="bg-white overflow-hidden shadow-xl sm:rounded-lg">
 
             <div class="mb-6 mx-2">
-                        <h3 class="text-lg font-medium text-gray-700 mt-2">Category ID / Name:</h3>
+                        <h3 class="text-lg font-medium text-gray-700 mt-2">Quiz ID / Name:</h3>
                         <p class="text-sm text-gray-600">{{ $quiz->id }} / {{ $quiz->title }}</p>
             </div>
 
