@@ -18,7 +18,7 @@ function LeaderboardHP() {
                     <p className="mt-8 text-base text-black sm:text-xl">See how you rank among other users in various quiz categories. Compete, improve your score, and aim for the top of the leaderboard!</p>
 
                     <div className="mt-10 sm:flex sm:items-center sm:space-x-8">
-                        <a href="#" title="" className="rounded inline-flex items-center justify-center px-10 py-4 text-base font-semibold text-white transition-all duration-200 bg-orange-500 hover:bg-orange-600 focus:bg-orange-600" role="button">Check the Leaderboard</a>
+                        <a href="/leaderboard" title="" className="rounded inline-flex items-center justify-center px-10 py-4 text-base font-semibold text-white transition-all duration-200 bg-orange-500 hover:bg-orange-600 focus:bg-orange-600" role="button">Check the Leaderboard</a>
                     </div>
                 </div>
 

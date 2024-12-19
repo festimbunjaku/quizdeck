@@ -22,7 +22,7 @@ function FlashcardHP() {
                     <p className="mt-8 text-base text-black sm:text-xl">Create, review, and study your own set of flashcards to help reinforce knowledge on various topics, from languages to programming.</p>
 
                     <div className="mt-10 sm:flex sm:items-center sm:space-x-8">
-                        <a href="#" title="" className="rounded inline-flex items-center justify-center px-10 py-4 text-base font-semibold text-white transition-all duration-200 bg-orange-500 hover:bg-orange-600 focus:bg-orange-600" role="button"> Use Flashcards </a>
+                        <a href="/flashcards" title="" className="rounded inline-flex items-center justify-center px-10 py-4 text-base font-semibold text-white transition-all duration-200 bg-orange-500 hover:bg-orange-600 focus:bg-orange-600" role="button"> Use Flashcards </a>
                     </div>
                 </div>
 
