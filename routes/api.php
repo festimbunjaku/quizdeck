@@ -2,15 +2,12 @@
 
 use App\Models\Quiz;
 use App\Models\Category;
-use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Route;
 use App\Http\Controllers\CategoryController;
 use App\Http\Controllers\QuizUserController;
 use App\Http\Controllers\LeaderboardController;
 use App\Http\Controllers\AuthController;
-use Illuminate\Support\Facades\Validator;
-use Illuminate\Support\Facades\Hash;
-use App\Models\User;
+
 
 Route::get('categories', function () {
     return Category::all();
