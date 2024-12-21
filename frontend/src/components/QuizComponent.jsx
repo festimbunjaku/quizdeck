@@ -1,10 +1,12 @@
 import React, { useEffect, useState, useCallback } from 'react';
 import { useParams, useNavigate } from 'react-router-dom';
 import axios from 'axios';
+import { useAuth } from '../AuthContext';  // Import AuthContext
 
 function QuizComponent() {
     const { categoryId, quizId } = useParams();
     const navigate = useNavigate();
+    const { isAuthenticated } = useAuth();  // Get auth state
     const [questions, setQuestions] = useState([]);
     const [currentQuestionIndex, setCurrentQuestionIndex] = useState(0);
     const [score, setScore] = useState(0);
@@ -12,10 +14,30 @@ function QuizComponent() {
     const [quizStarted, setQuizStarted] = useState(false);
     const [error, setError] = useState(null);
     const [selectedOption, setSelectedOption] = useState(null);
-    const [userId, setUserId] = useState(1);
+    const [userId, setUserId] = useState(null);  // Initially null
     const [quizCompleted, setQuizCompleted] = useState(false);
     const [answers, setAnswers] = useState([]);
     const [completedStatus, setCompletedStatus] = useState(0);
+
+    // Fetch user details if authenticated
+    useEffect(() => {
+        const fetchUserData = async () => {
+            if (isAuthenticated) {
+                const token = localStorage.getItem('auth_token');
+                try {
+                    const response = await axios.get('http://127.0.0.1:8000/api/user', {
+                        headers: { 'Authorization': `Bearer ${token}` },
+                    });
+                    setUserId(response.data.id);  // Set the dynamic user ID
+                } catch (error) {
+                    console.error("Error fetching user data:", error);
+                    setError('Failed to fetch user data');
+                }
+            }
+        };
+
+        fetchUserData();
+    }, [isAuthenticated]);
 
     useEffect(() => {
         axios
@@ -103,7 +125,7 @@ function QuizComponent() {
 
     const handleSubmitQuiz = () => {
         const quizResult = {
-            user_id: userId,
+            user_id: userId,  // Use dynamic user ID here
             quiz_id: quizId,
             score: score,
             completed: completedStatus,
@@ -128,12 +150,11 @@ function QuizComponent() {
         return (
             <div className="flex justify-center items-center min-h-screen">
                 <div className="text-center m-36">
-                    <h2 className="text-3xl font-bold text-orange-500">This quiz has no questions</h2>
+                    <h2>Loading questions...</h2>
                 </div>
             </div>
         );
     }
-
     return (
         <div className="quiz-container mt-10 text-black bg-gray-200 min-h-screen flex flex-col items-center justify-center">
             {!quizStarted ? (

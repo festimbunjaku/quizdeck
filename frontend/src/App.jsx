@@ -8,6 +8,7 @@ import DashboardPage from './pages/DashboardPage';
 import QuizPage from './pages/QuizPage';
 import QuizzesPage from './pages/QuizzesPage';
 import RegisterPage from './pages/RegisterPage';
+import PrivateRoute from './components/PrivateRoute';
 import { AuthProvider } from './AuthContext';
 
 function App() {
@@ -17,12 +18,14 @@ function App() {
         <Navbar />
         <Routes>
           <Route path="/" element={<HomePage />} />
-          <Route path='/quizzes' element={<QuizzesPage />} />
-          <Route path='/categories/:categoryId/quizzes/:quizId/questions' element={<QuizPage />} />
-          <Route path='/leaderboard' element={<LeaderboardPage />} />
           <Route path="/login" element={<LoginPage />} />
           <Route path="/register" element={<RegisterPage />} />
-          <Route path='/dashboard' element={<DashboardPage />} />
+          <Route path="/leaderboard" element={<LeaderboardPage />} />
+          
+          <Route path="/dashboard" element={<PrivateRoute element={<DashboardPage />} />} />
+          <Route path="/quizzes" element={<PrivateRoute element={<QuizzesPage />} />} />
+          <Route path="/categories/:categoryId/quizzes/:quizId/questions" element={<PrivateRoute element={<QuizPage />} />} />
+          
           <Route path="*" element={<Navigate to="/" />} />
         </Routes>
         <Footer />
