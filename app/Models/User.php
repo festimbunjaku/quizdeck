@@ -75,33 +75,18 @@ class User extends Authenticatable
                     ->withPivot('completed', 'score')
                     ->withTimestamps();
     }
-
-
-   
-    public function results()
-    {
-        return $this->hasMany(Result::class);
-    }
-    
-   
+       
     public function leaderboard()
     {
         return $this->hasOne(Leaderboard::class);
     }
 
-    
-    public function notes()
-    {
-        return $this->hasMany(Note::class);
-    }
-
-   
-    public function flashcards()
-    {
-        return $this->hasMany(Flashcard::class);
-    }
-
     public function quizResults()
+    {
+        return $this->hasMany(QuizUser::class);
+    }
+
+    public function quizUsers()
     {
         return $this->hasMany(QuizUser::class);
     }

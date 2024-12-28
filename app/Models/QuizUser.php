@@ -2,8 +2,11 @@
 
 namespace App\Models;
 
-use Illuminate\Database\Eloquent\Factories\HasFactory;
+use App\Models\quiz;
+use App\Models\User;
+use App\Models\leaderboard;
 use Illuminate\Database\Eloquent\Model;
+use Illuminate\Database\Eloquent\Factories\HasFactory;
 
 class QuizUser extends Model
 {
@@ -18,9 +21,16 @@ class QuizUser extends Model
         'completed',
     ];
 
+    protected static function booted()
+    {
+        static::deleted(function ($quizUser) {
+            leaderboard::where('user_id', $quizUser->user_id)->delete();
+        });
+    }
+
     public function quiz()
     {
-        return $this->belongsTo(Quiz::class);
+        return $this->belongsTo(quiz::class);
     }
 
     public function user()

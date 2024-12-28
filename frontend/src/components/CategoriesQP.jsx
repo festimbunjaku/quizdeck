@@ -5,18 +5,21 @@ import { useNavigate } from 'react-router-dom';
 function CategoriesQP() {
   const [categories, setCategories] = useState([]);
   const [quizzes, setQuizzes] = useState({});
-  const navigate = useNavigate(); 
-  
+  const [completedQuizzes, setCompletedQuizzes] = useState([]);
+  const navigate = useNavigate();
+
+  // Fetch categories
   useEffect(() => {
     axios.get('http://127.0.0.1:8000/api/categories')
       .then((response) => {
         setCategories(response.data);
       })
       .catch((error) => {
-        console.error('There was an error fetching the categories:', error);
+        console.error('Error fetching categories:', error);
       });
   }, []);
 
+  // Fetch quizzes for each category
   useEffect(() => {
     categories.forEach((category) => {
       axios.get(`http://127.0.0.1:8000/api/categories/${category.id}/quizzes`)
@@ -32,13 +35,37 @@ function CategoriesQP() {
     });
   }, [categories]);
 
+  // Fetch completed quizzes for the logged-in user
+  useEffect(() => {
+    const token = localStorage.getItem('token'); // Get token from localStorage
+    if (token) {
+      axios.get('http://127.0.0.1:8000/api/user/completed-quizzes', {
+        headers: {
+          'Authorization': `Bearer ${token}`,
+        },
+      })
+        .then((response) => {
+          setCompletedQuizzes(response.data); // List of quiz IDs user has completed
+        })
+        .catch((error) => {
+          console.error('Error fetching completed quizzes:', error);
+        });
+    }
+  }, []);
+
+  // Handle click on quiz to navigate to the quiz questions
   const handleQuizClick = (categoryId, quizId) => {
-    navigate(`/categories/${categoryId}/quizzes/${quizId}/questions`);
+    // Check if quiz is completed, if so, show alert and prevent navigation
+    const isCompleted = completedQuizzes.includes(quizId);
+    if (isCompleted) {
+      alert('This quiz is completed. You cannot retake it.');
+    } else {
+      navigate(`/categories/${categoryId}/quizzes/${quizId}/questions`);
+    }
   };
 
   return (
-    <>
-      <div className='min-h-screen'>
+    <div className='min-h-screen'>
       <h1 className="text-4xl font-bold text-center mt-32">Check Out All Categories and Their Quizzes</h1>
 
       <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-8 mt-16 px-6">
@@ -56,16 +83,22 @@ function CategoriesQP() {
                 <div className="mt-6">
                   <h6 className="font-medium text-xl">Quizzes in {category.name}</h6>
                   <ul className="mt-4">
-                    {quizzes[category.id].map((quiz) => (
-                      <li key={quiz.id} className="mb-4">
-                        <div
-                          className="bg-gray-100 p-4 rounded-lg shadow-md cursor-pointer"
-                          onClick={() => handleQuizClick(category.id, quiz.id)}
-                        >
-                          <h6 className="text-lg font-semibold">{quiz.title}</h6>
-                        </div>
-                      </li>
-                    ))}
+                    {quizzes[category.id].map((quiz) => {
+                      const isCompleted = completedQuizzes.includes(quiz.id);
+                      return (
+                        <li key={quiz.id} className="mb-4">
+                          <div
+                            className={`bg-gray-100 p-4 rounded-lg shadow-md cursor-pointer ${isCompleted ? 'bg-gray-300' : ''}`}
+                            onClick={() => handleQuizClick(category.id, quiz.id)}
+                          >
+                            <h6 className="text-lg font-semibold">{quiz.title}</h6>
+                            {isCompleted && (
+                              <p className="text-sm text-green-500 mt-2">Completed</p>
+                            )}
+                          </div>
+                        </li>
+                      );
+                    })}
                   </ul>
                 </div>
               ) : (
@@ -75,8 +108,7 @@ function CategoriesQP() {
           </div>
         ))}
       </div>
-      </div>
-    </>
+    </div>
   );
 }
 

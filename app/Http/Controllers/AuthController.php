@@ -2,10 +2,12 @@
 
 namespace App\Http\Controllers;
 
+use App\Models\User;
+use App\Models\QuizUser;
 use Illuminate\Http\Request;
+use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\Hash;
 use Illuminate\Validation\ValidationException;
-use App\Models\User;
 
 class AuthController extends Controller
 {
@@ -51,5 +53,14 @@ class AuthController extends Controller
     public function user(Request $request)
     {
         return response()->json($request->user());
+    }
+
+    public function getCompletedQuizzes()
+    {
+        $userId = Auth::id(); // Get the logged-in user's ID
+        $completedQuizzes = QuizUser::where('user_id', $userId)
+                                    ->where('completed', true)
+                                    ->pluck('quiz_id'); // Return a list of quiz IDs
+        return response()->json($completedQuizzes);
     }
 }

@@ -3,10 +3,11 @@
 use App\Models\Quiz;
 use App\Models\Category;
 use Illuminate\Support\Facades\Route;
+use App\Http\Controllers\AuthController;
+use App\Http\Controllers\UserController;
 use App\Http\Controllers\CategoryController;
 use App\Http\Controllers\QuizUserController;
 use App\Http\Controllers\LeaderboardController;
-use App\Http\Controllers\AuthController;
 
 
 Route::get('categories', function () {
@@ -28,6 +29,16 @@ Route::get('categories/{categoryId}/quizzes/{quizId}/questions', [CategoryContro
 Route::post('/quiz_results', [QuizUserController::class, 'store']);  // Consider renaming for clarity
 
 Route::get('/leaderboard', [LeaderboardController::class, 'index']);
+
+Route::middleware('auth:sanctum')->get('/user/quizzes', [QuizUserController::class, 'getUserQuizzes']);
+
+Route::middleware('auth:sanctum')->get('/user/completed-quizzes', [QuizUserController::class, 'getCompletedQuizzes']);
+
+Route::get('/leaderboard', [LeaderboardController::class, 'index']);
+
+Route::middleware('auth:sanctum')->put('/user/update-profile', [UserController::class, 'updateProfile']);
+
+Route::middleware('auth:sanctum')->put('/user/update-password', [UserController::class, 'updatePassword']);
 
 
 Route::post('/register', [AuthController::class, 'register']); 

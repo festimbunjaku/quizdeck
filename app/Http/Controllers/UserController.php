@@ -3,7 +3,10 @@
 namespace App\Http\Controllers;
 
 use App\Models\User;
+use App\Models\QuizUser;
 use Illuminate\Http\Request;
+use Illuminate\Support\Facades\Auth;
+use Illuminate\Support\Facades\Hash;
 use Spatie\Permission\Models\Role;  // Import the Role model from Spatie
 
 class UserController extends Controller
@@ -65,4 +68,46 @@ class UserController extends Controller
 
         return redirect()->route('users.index')->with('success', 'User deleted successfully.');
     }
+
+    public function getCompletedQuizzes(Request $request)
+    {
+        $user = $request->user();
+        $completedQuizzes = $user->quizzes()->where('pivot.completed', true)->get();
+    
+        return response()->json($completedQuizzes);
+    }
+    
+    public function updateProfile(Request $request)
+{
+    $user = $request->user();
+
+    $request->validate([
+        'name' => 'required|string|max:255',
+    ]);
+
+    $user->name = $request->name;
+    $user->save();
+
+    return response()->json(['message' => 'Profile updated successfully!']);
+}
+
+public function updatePassword(Request $request)
+{
+    $user = $request->user();
+
+    $request->validate([
+        'current_password' => 'required',
+        'new_password' => 'required|string|min:8|confirmed',
+    ]);
+
+    if (!Hash::check($request->current_password, $user->password)) {
+        return response()->json(['error' => 'Current password is incorrect.'], 400);
+    }
+
+    $user->password = bcrypt($request->new_password);
+    $user->save();
+
+    return response()->json(['message' => 'Password updated successfully!']);
+}
+
 }

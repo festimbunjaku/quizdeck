@@ -1,21 +1,30 @@
 <?php
 namespace App\Http\Controllers;
 
-use Illuminate\Support\Facades\DB;
+
+use App\Models\Leaderboard;
+use App\Models\QuizUser;
+use App\Models\User;
+use Illuminate\Http\Request;
 
 class LeaderboardController extends Controller
 {
     public function index()
     {
-        $leaderboard = DB::table('quiz_user')
-            ->join('users', 'quiz_user.user_id', '=', 'users.id')
-            ->select('users.name', 'quiz_user.user_id', DB::raw('SUM(quiz_user.score) as total_score'))
-            ->groupBy('quiz_user.user_id', 'users.name') 
-            ->orderByDesc('total_score') 
-            ->limit(10) 
-            ->get();
+        $leaderboard = User::withSum('quizUsers', 'score')
+            ->orderByDesc('quiz_users_sum_score')
+            ->get()
+            ->map(function ($user) {
+                return [
+                    'user_id' => $user->id,
+                    'name' => $user->name,
+                    'total_score' => $user->quiz_users_sum_score,
+                ];
+            });
 
         return response()->json($leaderboard);
     }
+
+    
 }
 
