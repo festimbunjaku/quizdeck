@@ -53,7 +53,7 @@ function LeaderboardLP() {
     <div className="leaderboard-container pt-3 mt-[83px] text-black bg-gray-200 min-h-screen flex flex-col items-center">
       <h2 className="text-3xl font-bold text-orange-500 mb-5">Leaderboard</h2>
       <div className="overflow-x-auto w-full max-w-4xl">
-        <table className="min-w-full table-auto bg-white rounded-lg shadow-lg">
+        <table className="min-w-full table-auto bg-white rounded-lg shadow-lg mb-4">
           <thead>
             <tr className="bg-orange-500 text-white">
               <th className="px-6 py-3 text-left">Rank</th>

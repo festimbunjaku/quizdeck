@@ -33,18 +33,14 @@ class QuestionController extends Controller
     }
     
 
-    // Show the form for creating a new resource.
     public function create()
     {
         $quizzes = Quiz::all(); 
         return view('questions.create', compact('quizzes'));
     }
 
-
-    // Store a newly created resource in storage.
     public function store(Request $request)
     {
-        // Validate the request data
         $validated = $request->validate([
             'quiz_id' => 'required|exists:quizzes,id',
             'question' => 'required|string',
@@ -55,15 +51,12 @@ class QuestionController extends Controller
             'correct_option' => 'required|in:A,B,C,D',
         ]);
 
-        // Create the question
         $question = Question::create($validated);
 
-        // Redirect back with a success message
         return redirect()->route('questions.index')
                          ->with('success', 'Question created successfully!');
     }
 
-    // Update the specified resource in storage.
     public function update(Request $request, Question $question)
     {
         $validated = $request->validate([
@@ -88,15 +81,12 @@ class QuestionController extends Controller
         return view('questions.show', compact('question'));
     }
 
-
-
     public function edit(Question $question)
     {
         $quizzes = Quiz::all(); 
         return view('questions.edit', compact('question', 'quizzes'));
     }
 
-    // Remove the specified resource from storage.
     public function destroy(Question $question)
     {
         $quiz_id = $question->quiz->id;
@@ -104,6 +94,4 @@ class QuestionController extends Controller
     
         return redirect()->route('questions.index', ['quiz_id' => $quiz_id]);
     }
-    
 }
-

@@ -18,7 +18,7 @@ return new class extends Migration
             $table->string('option_c');
             $table->string('option_d');
             $table->string('correct_option');
-            $table->foreignId('quiz_id')->constrained()->onDelete('cascade'); // Foreign key referencing quizzes
+            $table->foreignId('quiz_id')->constrained()->onDelete('cascade');
             $table->timestamps();
         });
     }

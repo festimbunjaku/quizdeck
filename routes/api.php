@@ -26,7 +26,7 @@ Route::get('quizzes/{id}', function ($id) {
 
 Route::get('categories/{categoryId}/quizzes/{quizId}/questions', [CategoryController::class, 'quizQuestions']);
 
-Route::post('/quiz_results', [QuizUserController::class, 'store']);  // Consider renaming for clarity
+Route::post('/quiz_results', [QuizUserController::class, 'store']);
 
 Route::get('/leaderboard', [LeaderboardController::class, 'index']);
 

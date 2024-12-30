@@ -8,7 +8,7 @@
     <div class="py-12">
         <div class="max-w-7xl mx-auto sm:px-6 lg:px-8">
             <div class="bg-white overflow-hidden shadow-xl sm:rounded-lg">
-                <form action="{{ route('users.update', $user->id) }}" method="POST" class="space-y-4">
+                <form action="{{ route('users.update', $user->id) }}" method="POST" class="space-y-4 m-4">
                     @csrf
                     @method('PUT')
 
@@ -23,26 +23,38 @@
                     </div>
 
                     <div>
-                        <label for="password" class="block text-sm font-medium text-gray-700">Password (Leave blank to keep current)</label>
-                        <input type="password" name="password" id="password" class="mt-1 block w-full border-gray-300 rounded-md shadow-sm">
+                        <label for="current_password" class="block text-sm font-medium text-gray-700">Current Password</label>
+                        <input type="password" name="current_password" id="current_password" class="mt-1 block w-full border-gray-300 rounded-md shadow-sm">
                     </div>
 
                     <div>
-                        <label for="password_confirmation" class="block text-sm font-medium text-gray-700">Confirm Password</label>
-                        <input type="password" name="password_confirmation" id="password_confirmation" class="mt-1 block w-full border-gray-300 rounded-md shadow-sm">
+                        <label for="new_password" class="block text-sm font-medium text-gray-700">New Password</label>
+                        <input type="password" name="new_password" id="new_password" class="mt-1 block w-full border-gray-300 rounded-md shadow-sm">
                     </div>
 
-                    <!-- Role Dropdown -->
                     <div>
-                        <label for="role" class="block text-sm font-medium text-gray-700">Role</label>
-                        <select name="role" id="role" class="mt-1 block w-full border-gray-300 rounded-md shadow-sm" required>
-                            @foreach($roles as $role)
-                                <option value="{{ $role->id }}" {{ $user->hasRole($role->name) ? 'selected' : '' }}>
-                                    {{ $role->name }}
-                                </option>
-                            @endforeach
-                        </select>
+                        <label for="new_password_confirmation" class="block text-sm font-medium text-gray-700">Confirm New Password</label>
+                        <input type="password" name="new_password_confirmation" id="new_password_confirmation" class="mt-1 block w-full border-gray-300 rounded-md shadow-sm">
                     </div>
+
+                    @if ($errors->any())
+                        <div class="mb-4 text-red-500">
+                            <ul>
+                                @foreach ($errors->all() as $error)
+                                    <li>{{ $error }}</li>
+                                @endforeach
+                            </ul>
+                        </div>
+                    @endif
+
+                    @if (session('success'))
+                        <div class="mb-4 text-green-500">
+                            {{ session('success') }}
+                        </div>
+                    @endif
+
+
+
 
                     <div class="mt-4">
                         <button type="submit" class="px-6 py-2 font-medium text-white bg-blue-600 rounded-lg hover:bg-blue-500">Update User</button>

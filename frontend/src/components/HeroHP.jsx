@@ -1,6 +1,5 @@
 import React from 'react';
 
-
 function HeroComponent() {
   return (
     <>
@@ -38,4 +37,4 @@ function HeroComponent() {
   )
 }
 
-export default HeroComponent
+export default HeroComponent;

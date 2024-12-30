@@ -1,19 +1,15 @@
 import { createContext, useContext, useState, useEffect } from "react";
 import axios from "axios";
 
-// Create the AuthContext
 const AuthContext = createContext();
 
-// Custom hook to use the AuthContext
 export const useAuth = () => useContext(AuthContext);
 
-// AuthProvider component
 export const AuthProvider = ({ children }) => {
   const [isAuthenticated, setIsAuthenticated] = useState(false);
-  const [loading, setLoading] = useState(true); // To handle initial auth check loading state
+  const [loading, setLoading] = useState(true);
 
-  // Base Axios Configuration
-  axios.defaults.baseURL = "http://127.0.0.1:8000/api"; // Update with your API base URL
+  axios.defaults.baseURL = "http://127.0.0.1:8000/api"; 
 
   useEffect(() => {
     const checkAuth = async () => {
@@ -40,7 +36,7 @@ export const AuthProvider = ({ children }) => {
         setIsAuthenticated(false);
       }
 
-      setLoading(false); // Authentication check is complete
+      setLoading(false);
     };
 
     checkAuth();
@@ -56,10 +52,9 @@ export const AuthProvider = ({ children }) => {
     setIsAuthenticated(false);
   };
 
-  // Provide context values
   return (
     <AuthContext.Provider value={{ isAuthenticated, login, logout }}>
-      {!loading && children} {/* Render children only when auth check is complete */}
+      {!loading && children}
     </AuthContext.Provider>
   );
 };

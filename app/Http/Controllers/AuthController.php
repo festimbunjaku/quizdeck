@@ -57,10 +57,10 @@ class AuthController extends Controller
 
     public function getCompletedQuizzes()
     {
-        $userId = Auth::id(); // Get the logged-in user's ID
+        $userId = Auth::id();
         $completedQuizzes = QuizUser::where('user_id', $userId)
                                     ->where('completed', true)
-                                    ->pluck('quiz_id'); // Return a list of quiz IDs
+                                    ->pluck('quiz_id');
         return response()->json($completedQuizzes);
     }
 }

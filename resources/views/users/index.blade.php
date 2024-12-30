@@ -8,31 +8,10 @@
     <div class="py-12">
         <div class="max-w-7xl mx-auto sm:px-6 lg:px-8">
             <div class="bg-white overflow-hidden shadow-xl sm:rounded-lg">
-                
-                <form method="GET" action="{{ route('users.index') }}" class="mt-2 ml-[88px]">
-                    <div class="flex items-center space-x-4">
-                        <div>
-                            <label for="category" class="block text-sm font-medium text-gray-700">Filter by User</label>
-                            <select name="user" id="user" class="block w-full mt-1 rounded-md border-gray-300 shadow-sm focus:ring-blue-500 focus:border-blue-500">
-                                <option value="">All Users</option>
-                                @foreach($users as $user)
-                                    <option value="{{ $user->id }}" {{ request('user') == $user->id ? 'selected' : '' }}>
-                                        {{ $user->name }}
-                                    </option>
-                                @endforeach
-                            </select>
-                        </div>
-                        <div class="mt-6">
-                            <button type="submit" class="px-4 py-2 text-white bg-blue-600 rounded-md hover:bg-blue-500">
-                                Filter
-                            </button>
-                        </div>
-                    </div>
-                </form>
 
                 @if($users && count($users) > 0)
                 <section class="container px-4 mx-auto">
-                    <div class="flex flex-col mt-6 mb-3">
+                    <div class="flex flex-col my-6">
                         <div class="-mx-4 -my-2 overflow-x-auto sm:-mx-6 lg:-mx-8">
                             <div class="inline-block w-full py-2 align-middle md:px-6 lg:px-8">
                                 <div class="overflow-x-auto border border-gray-200 md:rounded-lg">
@@ -47,9 +26,6 @@
                                                 </th>
                                                 <th scope="col" class="py-3.5 px-4 text-sm font-normal text-left text-gray-500">
                                                     <span>Email</span>
-                                                </th>
-                                                <th scope="col" class="py-3.5 px-4 text-sm font-normal text-left text-gray-500">
-                                                    <span>Role</span>
                                                 </th>
                                                 <th scope="col" class="py-3.5 px-4 pr-10 text-sm font-normal text-right text-gray-500">
                                                     Actions
@@ -67,9 +43,6 @@
                                                 </td>
                                                 <td class="px-4 py-4 text-sm text-gray-700 whitespace-nowrap">
                                                     <span>{{ $user->email }}</span>
-                                                </td>
-                                                <td class="px-4 py-4 text-sm text-gray-700 whitespace-nowrap">
-                                                    <span>{{ $user->role }}</span> <!-- Assuming 'role' field exists -->
                                                 </td>
                                                 <td class="px-4 py-4 text-sm text-right whitespace-nowrap">
                                                     <div class="inline-flex items-center gap-x-4">
@@ -99,11 +72,6 @@
                                         </tbody>
                                     </table>
                                 </div>
-                                <a href="{{ route('users.create') }}">
-                                    <button class="px-6 py-2 my-4 font-medium tracking-wide text-white capitalize transition-colors duration-300 transform bg-blue-600 rounded-lg hover:bg-blue-500 focus:outline-none focus:ring focus:ring-blue-300 focus:ring-opacity-80">
-                                        Create User
-                                    </button>
-                                </a>
                             </div>
                         </div>
                     </div>

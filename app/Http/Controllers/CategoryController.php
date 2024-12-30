@@ -25,8 +25,6 @@ class CategoryController extends Controller
         return view('categories.create');    
     }
 
-
-
     public function quizQuestions($categoryId, $quizId)
     {
         $category = Category::find($categoryId);
@@ -70,7 +68,8 @@ class CategoryController extends Controller
     {
         $category = Category::with('quizzes.questions')->findOrFail($id);
 
-        return view('categories.show', compact('category'));    }
+        return view('categories.show', compact('category'));    
+    }
 
     /**
      * Show the form for editing the specified resource.

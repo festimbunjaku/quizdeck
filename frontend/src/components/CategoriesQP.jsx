@@ -8,7 +8,6 @@ function CategoriesQP() {
   const [completedQuizzes, setCompletedQuizzes] = useState([]);
   const navigate = useNavigate();
 
-  // Fetch categories
   useEffect(() => {
     axios.get('http://127.0.0.1:8000/api/categories')
       .then((response) => {
@@ -19,7 +18,6 @@ function CategoriesQP() {
       });
   }, []);
 
-  // Fetch quizzes for each category
   useEffect(() => {
     categories.forEach((category) => {
       axios.get(`http://127.0.0.1:8000/api/categories/${category.id}/quizzes`)
@@ -35,9 +33,8 @@ function CategoriesQP() {
     });
   }, [categories]);
 
-  // Fetch completed quizzes for the logged-in user
   useEffect(() => {
-    const token = localStorage.getItem('token'); // Get token from localStorage
+    const token = localStorage.getItem('token');
     if (token) {
       axios.get('http://127.0.0.1:8000/api/user/completed-quizzes', {
         headers: {
@@ -45,7 +42,7 @@ function CategoriesQP() {
         },
       })
         .then((response) => {
-          setCompletedQuizzes(response.data); // List of quiz IDs user has completed
+          setCompletedQuizzes(response.data);
         })
         .catch((error) => {
           console.error('Error fetching completed quizzes:', error);
@@ -53,9 +50,7 @@ function CategoriesQP() {
     }
   }, []);
 
-  // Handle click on quiz to navigate to the quiz questions
   const handleQuizClick = (categoryId, quizId) => {
-    // Check if quiz is completed, if so, show alert and prevent navigation
     const isCompleted = completedQuizzes.includes(quizId);
     if (isCompleted) {
       alert('This quiz is completed. You cannot retake it.');

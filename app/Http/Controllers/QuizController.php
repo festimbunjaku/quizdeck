@@ -8,31 +8,25 @@ use Illuminate\Http\Request;
 
 class QuizController extends Controller
 {
-    /**
-     * Display a listing of the resource.
-     */
     public function index(Request $request)
-{
-    $categories = category::all();
+    {
+        $categories = category::all();
 
-    $quizes = Quiz::with('category');
+        $quizes = Quiz::with('category');
 
-    if ($request->has('category') && $request->category) {
-        $quizes->where('category_id', $request->category);
+        if ($request->has('category') && $request->category) {
+            $quizes->where('category_id', $request->category);
+        }
+
+        $quizes = $quizes->get();
+
+        return view('quizes.index', [
+            'quizes' => $quizes,
+            'categories' => $categories,
+            'selectedCategory' => $request->category,
+        ]);
     }
 
-    $quizes = $quizes->get();
-
-    return view('quizes.index', [
-        'quizes' => $quizes,
-        'categories' => $categories,
-        'selectedCategory' => $request->category,
-    ]);
-}
-
-    /**
-     * Show the form for creating a new resource.
-     */
     public function create()
     {
         $categories = \App\Models\Category::all();
@@ -40,28 +34,21 @@ class QuizController extends Controller
         return view('quizes.create', compact('categories'));    
     }
 
-    /**
-     * Store a newly created resource in storage.
-     */
     public function store(Request $request)
-        {
-            $request->validate([
-                'title' => 'required',
-                'category_id' => 'required|exists:categories,id', 
-            ]);
+    {
+        $request->validate([
+            'title' => 'required',
+            'category_id' => 'required|exists:categories,id', 
+        ]);
 
-            if(quiz::create([
-                'title' => $request->title,
-                'category_id' => $request->category_id,
-            ])){
-                return redirect()->route('quizes.index'); 
-            }    
-        }
+        if(quiz::create([
+            'title' => $request->title,
+            'category_id' => $request->category_id,
+        ])){
+            return redirect()->route('quizes.index'); 
+        }    
+    }
 
-
-    /**
-     * Display the specified resource.
-     */
     public function show(string $id)
     {
         $quiz = quiz::with('questions')->findOrFail($id);
@@ -69,23 +56,16 @@ class QuizController extends Controller
         return view('quizes.show', compact('quiz'));    
     }
 
-    /**
-     * Show the form for editing the specified resource.
-     */
     public function edit(string $id)
-        {
-            $quiz = quiz::findOrFail($id);
-            $categories = \App\Models\Category::all();
-            return view('quizes.edit', [
-                'quiz' => $quiz,
-                'categories' => $categories
-            ]);     
-        }
+    {
+        $quiz = quiz::findOrFail($id);
+        $categories = \App\Models\Category::all();
+        return view('quizes.edit', [
+            'quiz' => $quiz,
+            'categories' => $categories
+        ]);     
+    }
 
-
-    /**
-     * Update the specified resource in storage.
-     */
     public function update(Request $request, string $id)
     {
         $request->validate([
@@ -102,9 +82,6 @@ class QuizController extends Controller
         return redirect()->route('quizes.index');    
     }
 
-    /**
-     * Remove the specified resource from storage.
-     */
     public function destroy(string $id)
     {
         if(quiz::findOrFail($id)->delete()){
