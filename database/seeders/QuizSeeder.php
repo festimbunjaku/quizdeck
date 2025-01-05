@@ -20,7 +20,7 @@ class QuizSeeder extends Seeder
                     'user_id' => $user->id,
                     'quiz_id' => $quiz->id,
                     'completed' => fake()->boolean(),
-                    'score' => fake()->numberBetween(0, 100),
+                    'score' => fake()->numberBetween(0, 25),
                 ]);
             });
         });

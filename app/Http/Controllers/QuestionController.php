@@ -54,7 +54,7 @@ class QuestionController extends Controller
         $question = Question::create($validated);
 
         return redirect()->route('questions.index')
-                         ->with('success', 'Question created successfully!');
+        ->with('success', 'Question created successfully!');
     }
 
     public function update(Request $request, Question $question)

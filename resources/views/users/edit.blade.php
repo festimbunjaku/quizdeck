@@ -53,9 +53,6 @@
                         </div>
                     @endif
 
-
-
-
                     <div class="mt-4">
                         <button type="submit" class="px-6 py-2 font-medium text-white bg-blue-600 rounded-lg hover:bg-blue-500">Update User</button>
                     </div>

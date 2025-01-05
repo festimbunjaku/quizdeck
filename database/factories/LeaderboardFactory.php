@@ -14,7 +14,7 @@ class LeaderboardFactory extends Factory
     {
         return [
             'user_id' => User::factory(), 
-            'total_score' => $this->faker->numberBetween(0, 100),
+            'total_score' => $this->faker->numberBetween(0, 25),
         ];
     }
 }

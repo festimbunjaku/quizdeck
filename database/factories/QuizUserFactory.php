@@ -17,7 +17,7 @@ class QuizUserFactory extends Factory
             'user_id' => User::factory(),
             'quiz_id' => Quiz::factory(),
             'completed' => fake()->boolean(),
-            'score' => fake()->numberBetween(0, 100),
+            'score' => fake()->numberBetween(0, 25),
         ];
     }
 }
