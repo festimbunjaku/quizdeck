@@ -8,7 +8,7 @@
     <div class="py-12">
         <div class="max-w-7xl mx-auto sm:px-6 lg:px-8">
             <div class="bg-white overflow-hidden shadow-xl sm:rounded-lg">
-            <form method="GET" action="{{ route('quizes.index') }}" class="mt-2 ml-[88px]">
+            <form method="GET" action="{{ route('quizes.index') }}" class="mt-2 ml-[88px] mb-4">
                 <div class="flex items-center space-x-4">
                     <div>
                         <label for="category" class="block text-sm font-medium text-gray-700">Filter by Category</label>
